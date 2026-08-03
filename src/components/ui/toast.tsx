@@ -30,6 +30,16 @@ type ToastProps = {
 }
 
 export function Toast({ toast, onDismiss }: ToastProps) {
+  async function handleAction() {
+    await toast.onAction?.()
+    onDismiss(toast.id)
+  }
+
+  async function handleCancel() {
+    await toast.onCancel?.()
+    onDismiss(toast.id)
+  }
+
   return (
     <div
       className={cn(
@@ -45,6 +55,28 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         <p className="text-sm font-medium">{toast.title}</p>
         {toast.description ? (
           <p className="text-sm leading-5 opacity-90">{toast.description}</p>
+        ) : null}
+        {toast.actionLabel || toast.cancelLabel ? (
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            {toast.cancelLabel ? (
+              <button
+                type="button"
+                onClick={() => void handleCancel()}
+                className="inline-flex h-8 cursor-pointer items-center justify-center rounded-lg border border-white/10 px-3 text-xs font-medium text-current/85 transition hover:bg-white/10 hover:text-current"
+              >
+                {toast.cancelLabel}
+              </button>
+            ) : null}
+            {toast.actionLabel ? (
+              <button
+                type="button"
+                onClick={() => void handleAction()}
+                className="inline-flex h-8 cursor-pointer items-center justify-center rounded-lg bg-white px-3 text-xs font-semibold text-slate-950 transition hover:bg-slate-100"
+              >
+                {toast.actionLabel}
+              </button>
+            ) : null}
+          </div>
         ) : null}
       </div>
 

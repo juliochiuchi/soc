@@ -99,7 +99,17 @@ export function useLoginController() {
 }
 
 export function useHomeController() {
+  const { user } = useAuthUser()
+  const username = user?.username ?? 'usuario'
+
+  return {
+    username,
+  }
+}
+
+export function useProtectedAppController() {
   const navigate = useNavigate()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
   const { user, signOut } = useAuthUser()
 
   async function handleLogout() {
@@ -107,12 +117,13 @@ export function useHomeController() {
     await navigate({ to: '/login', replace: true })
   }
 
-  const username = user?.username ?? 'usuário'
+  const username = user?.username ?? 'usuario'
   const authenticatedAtLabel = user?.authenticatedAt
-    ? dayjs(user.authenticatedAt).format('DD/MM/YYYY [às] HH:mm')
+    ? dayjs(user.authenticatedAt).format('DD/MM/YYYY [as] HH:mm')
     : 'agora'
 
   return {
+    pathname,
     username,
     authenticatedAtLabel,
     handleLogout,

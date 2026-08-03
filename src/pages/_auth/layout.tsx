@@ -4,7 +4,11 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { LoaderCircle, ShieldCheck } from 'lucide-react'
 
 import { AuthShell } from '@/components/auth/auth-shell'
-import { useAuthLayoutController } from '@/controllers/authController'
+import { AppShellLayout } from '@/components/home/app-shell-layout'
+import {
+  useAuthLayoutController,
+  useProtectedAppController,
+} from '@/controllers/authController'
 
 export const Route = createFileRoute('/_auth')({
   component: AuthLayout,
@@ -13,6 +17,8 @@ export const Route = createFileRoute('/_auth')({
 function AuthLayout() {
   const { canRenderContent, isCheckingSession, isRedirecting } =
     useAuthLayoutController()
+  const { authenticatedAtLabel, handleLogout, pathname, username } =
+    useProtectedAppController()
 
   if (!canRenderContent) {
     return (
@@ -58,5 +64,18 @@ function AuthLayout() {
     )
   }
 
-  return <Outlet />
+  if (pathname === '/login') {
+    return <Outlet />
+  }
+
+  return (
+    <AppShellLayout
+      username={username}
+      authenticatedAtLabel={authenticatedAtLabel}
+      currentPath={pathname}
+      onLogout={handleLogout}
+    >
+      <Outlet />
+    </AppShellLayout>
+  )
 }

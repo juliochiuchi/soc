@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as AuthLayoutRouteImport } from './pages/_auth/layout'
 import { Route as AuthIndexRouteImport } from './pages/_auth/index'
+import { Route as AuthFoldersRouteImport } from './pages/_auth/folders'
 import { Route as AuthHomeRouteImport } from './pages/_auth/home'
 import { Route as AuthLoginRouteImport } from './pages/_auth/login'
+import { Route as AuthFoldersFolderIdRouteImport } from './pages/_auth/folders.$folderId'
+import { Route as AuthFoldersNewRouteImport } from './pages/_auth/folders.new'
+import { Route as AuthFoldersFolderIdEditRouteImport } from './pages/_auth/folders.$folderId.edit'
 
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: '/_auth',
@@ -21,6 +25,11 @@ const AuthLayoutRoute = AuthLayoutRouteImport.update({
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthLayoutRoute,
+} as any)
+const AuthFoldersRoute = AuthFoldersRouteImport.update({
+  id: '/folders',
+  path: '/folders',
   getParentRoute: () => AuthLayoutRoute,
 } as any)
 const AuthHomeRoute = AuthHomeRouteImport.update({
@@ -33,30 +42,80 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthLayoutRoute,
 } as any)
+const AuthFoldersFolderIdRoute = AuthFoldersFolderIdRouteImport.update({
+  id: '/$folderId',
+  path: '/$folderId',
+  getParentRoute: () => AuthFoldersRoute,
+} as any)
+const AuthFoldersNewRoute = AuthFoldersNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthFoldersRoute,
+} as any)
+const AuthFoldersFolderIdEditRoute = AuthFoldersFolderIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AuthFoldersFolderIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
+  '/folders': typeof AuthFoldersRouteWithChildren
   '/home': typeof AuthHomeRoute
   '/login': typeof AuthLoginRoute
+  '/folders/$folderId': typeof AuthFoldersFolderIdRouteWithChildren
+  '/folders/new': typeof AuthFoldersNewRoute
+  '/folders/$folderId/edit': typeof AuthFoldersFolderIdEditRoute
 }
 export interface FileRoutesByTo {
+  '/folders': typeof AuthFoldersRouteWithChildren
   '/home': typeof AuthHomeRoute
   '/login': typeof AuthLoginRoute
   '/': typeof AuthIndexRoute
+  '/folders/$folderId': typeof AuthFoldersFolderIdRouteWithChildren
+  '/folders/new': typeof AuthFoldersNewRoute
+  '/folders/$folderId/edit': typeof AuthFoldersFolderIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthLayoutRouteWithChildren
+  '/_auth/folders': typeof AuthFoldersRouteWithChildren
   '/_auth/home': typeof AuthHomeRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/': typeof AuthIndexRoute
+  '/_auth/folders/$folderId': typeof AuthFoldersFolderIdRouteWithChildren
+  '/_auth/folders/new': typeof AuthFoldersNewRoute
+  '/_auth/folders/$folderId/edit': typeof AuthFoldersFolderIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/login'
+  fullPaths:
+    | '/'
+    | '/folders'
+    | '/home'
+    | '/login'
+    | '/folders/$folderId'
+    | '/folders/new'
+    | '/folders/$folderId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/home' | '/login' | '/'
-  id: '__root__' | '/_auth' | '/_auth/home' | '/_auth/login' | '/_auth/'
+  to:
+    | '/folders'
+    | '/home'
+    | '/login'
+    | '/'
+    | '/folders/$folderId'
+    | '/folders/new'
+    | '/folders/$folderId/edit'
+  id:
+    | '__root__'
+    | '/_auth'
+    | '/_auth/folders'
+    | '/_auth/home'
+    | '/_auth/login'
+    | '/_auth/'
+    | '/_auth/folders/$folderId'
+    | '/_auth/folders/new'
+    | '/_auth/folders/$folderId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -79,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
+    '/_auth/folders': {
+      id: '/_auth/folders'
+      path: '/folders'
+      fullPath: '/folders'
+      preLoaderRoute: typeof AuthFoldersRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
     '/_auth/home': {
       id: '/_auth/home'
       path: '/home'
@@ -93,16 +159,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
+    '/_auth/folders/$folderId': {
+      id: '/_auth/folders/$folderId'
+      path: '/$folderId'
+      fullPath: '/folders/$folderId'
+      preLoaderRoute: typeof AuthFoldersFolderIdRouteImport
+      parentRoute: typeof AuthFoldersRoute
+    }
+    '/_auth/folders/new': {
+      id: '/_auth/folders/new'
+      path: '/new'
+      fullPath: '/folders/new'
+      preLoaderRoute: typeof AuthFoldersNewRouteImport
+      parentRoute: typeof AuthFoldersRoute
+    }
+    '/_auth/folders/$folderId/edit': {
+      id: '/_auth/folders/$folderId/edit'
+      path: '/edit'
+      fullPath: '/folders/$folderId/edit'
+      preLoaderRoute: typeof AuthFoldersFolderIdEditRouteImport
+      parentRoute: typeof AuthFoldersFolderIdRoute
+    }
   }
 }
 
+interface AuthFoldersFolderIdRouteChildren {
+  AuthFoldersFolderIdEditRoute: typeof AuthFoldersFolderIdEditRoute
+}
+
+const AuthFoldersFolderIdRouteChildren: AuthFoldersFolderIdRouteChildren = {
+  AuthFoldersFolderIdEditRoute: AuthFoldersFolderIdEditRoute,
+}
+
+const AuthFoldersFolderIdRouteWithChildren =
+  AuthFoldersFolderIdRoute._addFileChildren(AuthFoldersFolderIdRouteChildren)
+
+interface AuthFoldersRouteChildren {
+  AuthFoldersFolderIdRoute: typeof AuthFoldersFolderIdRouteWithChildren
+  AuthFoldersNewRoute: typeof AuthFoldersNewRoute
+}
+
+const AuthFoldersRouteChildren: AuthFoldersRouteChildren = {
+  AuthFoldersFolderIdRoute: AuthFoldersFolderIdRouteWithChildren,
+  AuthFoldersNewRoute: AuthFoldersNewRoute,
+}
+
+const AuthFoldersRouteWithChildren = AuthFoldersRoute._addFileChildren(
+  AuthFoldersRouteChildren,
+)
+
 interface AuthLayoutRouteChildren {
+  AuthFoldersRoute: typeof AuthFoldersRouteWithChildren
   AuthHomeRoute: typeof AuthHomeRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
 
 const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthFoldersRoute: AuthFoldersRouteWithChildren,
   AuthHomeRoute: AuthHomeRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthIndexRoute: AuthIndexRoute,

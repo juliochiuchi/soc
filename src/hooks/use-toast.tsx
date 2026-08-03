@@ -8,7 +8,11 @@ export type ToastInput = {
   title: string
   description?: string
   variant?: ToastVariant
-  duration?: number
+  duration?: number | null
+  actionLabel?: string
+  onAction?: () => void | Promise<void>
+  cancelLabel?: string
+  onCancel?: () => void | Promise<void>
 }
 
 export type ToastItem = ToastInput & {
@@ -52,9 +56,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         },
       ])
 
-      window.setTimeout(() => {
-        dismiss(id)
-      }, duration)
+      if (typeof duration === 'number' && duration > 0) {
+        window.setTimeout(() => {
+          dismiss(id)
+        }, duration)
+      }
     },
     [dismiss],
   )
