@@ -56,6 +56,8 @@ export function useFoldersController() {
   const [deletingFolderId, setDeletingFolderId] = React.useState<string | null>(
     null,
   )
+  const [folderPendingDelete, setFolderPendingDelete] =
+    React.useState<FolderSummary | null>(null)
 
   const loadFolders = React.useCallback(async () => {
     setIsLoading(true)
@@ -131,42 +133,48 @@ export function useFoldersController() {
 
   const handleDeleteFolder = React.useCallback(
     async (folder: FolderSummary) => {
-      async function confirmDeleteFolder() {
-        setDeletingFolderId(folder.id)
-
-        try {
-          await deleteFolder(folder.id)
-          toast({
-            title: 'Pasta excluida',
-            description: 'A pasta foi removida com sucesso.',
-            variant: 'success',
-          })
-          await loadFolders()
-        } catch (error) {
-          toast({
-            title: 'Falha ao excluir pasta',
-            description: getFolderErrorDescription(
-              error,
-              'Nao foi possivel excluir a pasta.',
-            ),
-            variant: 'destructive',
-          })
-        } finally {
-          setDeletingFolderId(null)
-        }
-      }
-
-      toast({
-        title: 'Confirmar exclusão',
-        description: `Deseja realmente excluir a pasta "${folder.folderName}"?`,
-        variant: 'destructive',
-        duration: null,
-        cancelLabel: 'Cancelar',
-        actionLabel: 'Excluir',
-        onAction: confirmDeleteFolder,
-      })
+      setFolderPendingDelete(folder)
     },
-    [loadFolders, toast],
+    [],
+  )
+
+  const handleConfirmDeleteFolder = React.useCallback(async () => {
+    if (!folderPendingDelete) {
+      return
+    }
+
+    setDeletingFolderId(folderPendingDelete.id)
+
+    try {
+      await deleteFolder(folderPendingDelete.id)
+      toast({
+        title: 'Pasta excluida',
+        description: 'A pasta foi removida com sucesso.',
+        variant: 'success',
+      })
+      setFolderPendingDelete(null)
+      await loadFolders()
+    } catch (error) {
+      toast({
+        title: 'Falha ao excluir pasta',
+        description: getFolderErrorDescription(
+          error,
+          'Nao foi possivel excluir a pasta.',
+        ),
+        variant: 'destructive',
+      })
+    } finally {
+      setDeletingFolderId(null)
+    }
+  }, [folderPendingDelete, loadFolders, toast])
+
+  const handleDeleteDialogOpenChange = React.useCallback(
+    (open: boolean) => {
+      if (!open && !deletingFolderId) {
+        setFolderPendingDelete(null)
+      }
+    },
+    [deletingFolderId],
   )
 
   return {
@@ -175,12 +183,15 @@ export function useFoldersController() {
     availableYears,
     isLoading,
     deletingFolderId,
+    folderPendingDelete,
     updateFilter,
     resetFilters,
     handleCreateFolder,
     handleViewFolder,
     handleEditFolder,
     handleDeleteFolder,
+    handleConfirmDeleteFolder,
+    handleDeleteDialogOpenChange,
     reloadFolders: loadFolders,
   }
 }

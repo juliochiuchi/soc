@@ -8,6 +8,7 @@ const persistentStorageKey = 'soc.auth.remembered-session'
 
 const storedAuthSessionSchema = z.object({
   hasAuthentication: z.literal(true),
+  userId: z.string().uuid().optional(),
   username: z.string().trim().min(1).max(60),
   authenticatedAt: z.string().min(1),
 })
@@ -15,6 +16,7 @@ const storedAuthSessionSchema = z.object({
 export type AuthSession = z.infer<typeof storedAuthSessionSchema>
 
 type SocUserRecord = {
+  id: string
   username: string
 }
 
@@ -62,7 +64,7 @@ export async function authenticateUser({
 }: LoginSchema): Promise<AuthSession> {
   const { data, error } = await supabase
     .from('soc_users')
-    .select('username')
+    .select('id,username')
     .eq('username', username)
     .eq('password', password)
     .maybeSingle<SocUserRecord>()
@@ -77,9 +79,28 @@ export async function authenticateUser({
 
   return {
     hasAuthentication: true,
+    userId: data.id,
     username: data.username,
     authenticatedAt: new Date().toISOString(),
   }
+}
+
+export async function getUserIdByUsername(username: string) {
+  const { data, error } = await supabase
+    .from('soc_users')
+    .select('id')
+    .eq('username', username)
+    .maybeSingle<{ id: string }>()
+
+  if (error) {
+    throw new Error('Não foi possível identificar o usuário autenticado.')
+  }
+
+  if (!data) {
+    throw new Error('O usuário autenticado não foi encontrado.')
+  }
+
+  return data.id
 }
 
 export function restoreAuthSession(): AuthSession | null {

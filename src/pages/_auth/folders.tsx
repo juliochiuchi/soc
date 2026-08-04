@@ -7,6 +7,7 @@ import { FolderCard } from '@/components/folders/folder-card'
 import { FolderFiltersBar } from '@/components/folders/folder-filters'
 import { FoldersPageHero } from '@/components/folders/folders-page-hero'
 import { FoldersStatePanel } from '@/components/folders/folders-state-panel'
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { useFoldersController } from '@/controllers/folderController'
 
 export const Route = createFileRoute('/_auth/folders')({
@@ -28,8 +29,11 @@ function FoldersIndexContent() {
     availableYears,
     deletingFolderId,
     filters,
+    folderPendingDelete,
     folders,
     handleCreateFolder,
+    handleConfirmDeleteFolder,
+    handleDeleteDialogOpenChange,
     handleDeleteFolder,
     handleEditFolder,
     handleViewFolder,
@@ -57,7 +61,7 @@ function FoldersIndexContent() {
           spinningIcon
         />
       ) : folders.length ? (
-        <div className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {folders.map((folder) => (
             <FolderCard
               key={folder.id}
@@ -77,6 +81,19 @@ function FoldersIndexContent() {
           variant="dashed"
         />
       )}
+
+      <ConfirmationDialog
+        open={Boolean(folderPendingDelete)}
+        onOpenChange={handleDeleteDialogOpenChange}
+        title="Excluir pasta"
+        description={
+          folderPendingDelete
+            ? `Deseja realmente excluir a pasta "${folderPendingDelete.folderName}"?`
+            : ''
+        }
+        isConfirming={Boolean(deletingFolderId)}
+        onConfirm={handleConfirmDeleteFolder}
+      />
     </div>
   )
 }

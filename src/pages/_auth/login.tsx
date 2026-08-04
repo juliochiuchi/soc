@@ -6,11 +6,10 @@ import { ArrowRight, KeyRound, UserRound } from 'lucide-react'
 import { useLoginController } from '@/controllers/authController'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
-  FormDescription,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -99,36 +98,10 @@ function LoginPage() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="rememberSession"
-                  render={({ field }) => (
-                    <FormItem className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className="flex items-start gap-3">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="mt-1"
-                          />
-                        </FormControl>
-                        <div className="space-y-1">
-                          <FormLabel>Manter sessão ativa</FormLabel>
-                          <FormDescription>
-                            Salva seu acesso neste dispositivo para evitar novo login
-                            a cada entrada.
-                          </FormDescription>
-                        </div>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full rounded-xl mt-6"
+                  className="w-full rounded-xl mt-4"
                   disabled={form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting ? 'Validando acesso...' : 'Entrar'}

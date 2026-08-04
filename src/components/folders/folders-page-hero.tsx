@@ -29,10 +29,9 @@ export function FoldersPageHero({ totalFolders }: FoldersPageHeroProps) {
             <h1 className="max-w-3xl text-3xl font-semibold tracking-tighter text-white md:text-5xl">
               Pastas abertas
             </h1>
-            <p className="max-w-2xl text-sm leading-7 text-slate-300 md:text-[0.96rem]">
-              Um painel com leitura limpa, foco em valores e navegação rápida
-              para acompanhar cada pasta sem excesso visual.
-            </p>
+            {/* <p className="max-w-2xl text-sm leading-7 text-slate-300 md:text-[0.96rem]">
+              breve decricao aqui
+            </p> */}
           </div>
         </div>
 

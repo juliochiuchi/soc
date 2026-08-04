@@ -183,3 +183,38 @@ body::before {
     @apply font-sans;
   }
 }
+
+.modal-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.38) transparent;
+}
+
+.modal-scroll-area::-webkit-scrollbar {
+  width: 12px;
+}
+
+.modal-scroll-area::-webkit-scrollbar-track {
+  margin: 10px 8px 10px 0;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.modal-scroll-area::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(148, 163, 184, 0.46) 0%,
+    rgba(100, 116, 139, 0.62) 100%
+  );
+  background-clip: padding-box;
+}
+
+.modal-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(226, 232, 240, 0.5) 0%,
+    rgba(148, 163, 184, 0.72) 100%
+  );
+  background-clip: padding-box;
+}

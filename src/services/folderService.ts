@@ -100,7 +100,7 @@ function toFolderSummary(
     isActive: folder.status,
     transactionNames: transactions.map((transaction) => transaction.name),
     totalAmount: transactions.reduce(
-      (accumulator, transaction) => accumulator + transaction.price,
+      (accumulator, transaction) => accumulator + Math.abs(transaction.price),
       0,
     ),
     transactionCount: transactions.length,
